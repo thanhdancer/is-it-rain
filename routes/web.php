@@ -27,8 +27,8 @@ Route::middleware('auth')->group(function () {
 
 // Weather route group
 Route::prefix('weather')->group(function () {
-    Route::get('/', [WeatherController::class, 'getWeather']);
-    Route::get('/place', [WeatherController::class, 'getWeatherByLatLon']);
+    Route::get('/', [WeatherController::class, 'getWeather'])->name('weather.index');
+    Route::get('/place', [WeatherController::class, 'getWeatherByLatLon'])->name('weather.place');
 });
 
 require __DIR__.'/auth.php';
