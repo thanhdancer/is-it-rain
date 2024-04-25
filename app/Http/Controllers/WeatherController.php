@@ -9,9 +9,9 @@ use Inertia\Inertia;
 class WeatherController extends Controller
 {
 
-    private function _getWeather($lat, $lon)
+    private function _getWeather($latitude, $longitude)
     {
-        $url = "https://api.open-meteo.com/v1/forecast?latitude={$lat}&longitude={$lon}&current=temperature_2m,relative_humidity_2m,precipitation_probability&hourly=temperature_2m,relative_humidity_2m,precipitation_probability";
+        $url = "https://api.open-meteo.com/v1/forecast?latitude={$latitude}&longitude={$longitude}&current=temperature_2m,relative_humidity_2m,precipitation_probability&hourly=temperature_2m,relative_humidity_2m,precipitation_probability";
 
         $response = file_get_contents($url);
         if (!$response) {
@@ -83,12 +83,18 @@ class WeatherController extends Controller
             $locationUrl = "http://ip-api.com/json/{$ip}";
             $locationResponse = file_get_contents($locationUrl);
             $locationData = json_decode($locationResponse);
-            $lat = $locationData->lat;
-            $lon = $locationData->lon;
+            $latitude = $locationData->lat;
+            $longitude = $locationData->lon;
         } catch (\Exception $e) {
             return response()->json(['message' => 'Could not get location'], 500);
         }
 
-        return $this->_getWeather($lat, $lon);
+        return Inertia::render('Weather', [
+            'position' => [
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+            ],
+            'weather' => $this->_getWeather($latitude, $longitude)
+        ]);
     }
 }
